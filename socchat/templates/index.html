@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en" ng-app>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello To #Book</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <script src="https://smartlock.google.com/client"></script>
+    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <meta name="google-signin-client_id" content="67628674747-ngitfkigrvtclgfo0ot8r6teur3v7nkb.apps.googleusercontent.com">
+    
+    <script>
+            thisPage={
+                token:'{{ csrf_token }}',logged:false,
+                initialize:function thisPage(doit=function(){}){
+                    var self=this;
+                    $.get('/get_val', function(data, status){
+                        if(status==="success"){
+                            self.token=data;
+                            self.check_login(doit);
+                        }
+                        else console.log(status+"Value not initialized"+data);
+                    });
+                },
+                requestServer:function(where,data={},fun=function(){}, retType='text'){
+                    var self=this;
+                    var v={};
+                    data.csrfmiddlewaretoken=this.token;
+                    $.post(where, data, function(data,status){
+                        v.data=data;
+                        v.status=status;
+                        fun(data,status);
+                    }, retType);
+                    return v;
+                },
+                check_login:function(doit=function(){}){
+                    var self=this;
+                    var assign=function(data,status){
+                        self.logged=(data==="1");
+                        if(data==="1"){
+                            self.getUsrDetails()
+                        }
+                        doit();
+                    }
+                    this.requestServer("/checklogin",{}, assign);
+                },
+                components:[],
+                userDetails:{},
+                getUsrDetails:function() {
+                    self=this
+                    this.requestServer('/usrinfo', {}, function(data,status) {
+                        $.get("https://www.googleapis.com/plus/v1/people/"+data.data.gid+"?key="+data.data.api, function(data,status) {
+                            self.userDetails=data
+                        }, 'json')
+                        self.userDetails.email = data.email
+                    }, 'json')
+                }
+            
+            };
+            
+        window.onGoogleYoloLoad = (googleyolo) => {
+            
+        };
+        function onSignIn(googleUser) {
+            var profile = googleUser.getBasicProfile(); 
+                thisPage.requestServer("/signIn", {"id_token":googleUser.getAuthResponse().id_token});
+                thisPage.check_login();
+        }
+        $(document).ready(function(){
+            
+        });
+        
+        function signOut() {
+            var auth2 = gapi.auth2.getAuthInstance();
+            auth2.signOut().then(function () {
+              thisPage.requestServer("/signOut",{},function(data,status){thisPage.check_login();});
+            });
+
+          }
+        
+    </script>
+    <style>
+        body::-webkit-scrollbar {
+            width: 4px;
+        }
+         
+        body::-webkit-scrollbar-track {
+            -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+        }
+         
+        body::-webkit-scrollbar-thumb {
+          background-color: rgb(0, 0, 0);
+          outline: 1px solid slategrey;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="jumbotron container">
+            <h1 class="card-head">Step 1: Login</h1>
+            <div class="card-body">
+                    <div class="alert alert-info">Login with google account to fast acess of #book</div>
+                    <div class="row">
+                        <div class="col-sm-5"></div>
+                        <div class="col-sm-2">
+                                <div class="g-signin2" data-onsuccess="onSignIn"></div>
+                        </div>
+                        <div class="col-sm-5"></div>
+                    </div>
+                    
+            </div>
+    </div>
+    <div class="jumbotron container">
+        <h1 class="card-head">Step 2: Select Category</h1>
+        <div class="card-body"></div>
+    </div>
+    <div class="jumbotron container">
+            <h1>Step 2: Select Category</h1>
+            <div id="demo" class="carousel slide" data-ride="carousel">
+
+                    <!-- Indicators -->
+                    <ul class="carousel-indicators">
+                      <li data-target="#demo" data-slide-to="0" class="active"></li>
+                    </ul>
+                  
+                    <!-- The slideshow -->
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                            <div class="card" style="height:300px;">
+                                    <img class="card-img-top" src="./school/school.jpg" alt="Card image">
+                                    <center>
+                                            <div class="card-img-overlay">
+                                                    <h1>
+                                                        School
+                                                    </h1> <br><br><br><br>
+                                                    Create manage your own school/college, including marksheets/calender(Timetable)/Datesheet/attandance etc
+                                                    <br>
+                                                    <a role="button" class="btn btn-primary" onclick="nav_school();">Go to School section</a>
+                                                  </div>
+                                    </center>
+                                    
+                            </div>
+                        </div>
+                    </div>
+                  
+                    <!-- Left and right controls -->
+                    <a class="carousel-control-prev" href="#demo" data-slide="prev">
+                      <span class="carousel-control-prev-icon"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#demo" data-slide="next">
+                      <span class="carousel-control-next-icon"></span>
+                    </a>
+                  
+                  </div>
+            <div id="step2body"></div>
+        
+    </div>
+        
+        
+</body>
+
+</html>
+<script>
+        function nav_school(){
+            if(thisPage.logged)
+            {
+                window.location="./school/";
+            }
+        }
+    
+</script>
