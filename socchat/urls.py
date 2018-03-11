@@ -29,6 +29,6 @@ urlpatterns = [
     url(r'^usrinfo', usr_info),
     url(r'^$', index),
     path('apiusers/', include('users.urls')),
-    path('apischool/', include('schools.urls'))
+    
     
 ]

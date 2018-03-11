@@ -39,8 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'socchat',
     'rest_framework',
-    'users',
-    'schools'
+    'users'
 ]
 
 MIDDLEWARE = [
