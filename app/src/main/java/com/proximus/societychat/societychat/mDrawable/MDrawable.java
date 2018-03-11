@@ -11,8 +11,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.ray.school.R;
-
+import com.proximus.societychat.societychat.R;
 import java.util.Map;
 import java.util.Vector;
 

@@ -41,7 +41,7 @@ public class HbookConnect{
         this.context = context;
         this.origin = origin;
         dm = new DManager(context, "db1.db", null, 1);
-        cookie = DManager.get_cookie(context);
+        cookie = DManager.get_cookie(context, origin);
         if(cookie==null)
         {
             Log("Cookie not saved, updating from net");
@@ -52,7 +52,7 @@ public class HbookConnect{
         }
         else{
 
-            cookie = DManager.get_cookie(context);
+            cookie = DManager.get_cookie(context, origin);
             Log("Cookie found, cookie:"+cookie);
             cookiesToken = extract_cookiecsrf(cookie);
             ready=true;
@@ -88,8 +88,8 @@ public class HbookConnect{
                 }
                 Log("rawCook ::"+response.headers);
                 if(rawCookies==null){return super.parseNetworkResponse(response);}
-                DManager.set_cookie(rawCookies, context);
-                cookie = DManager.get_cookie(context);
+                DManager.set_cookie(rawCookies, context, origin);
+                cookie = DManager.get_cookie(context, origin);
                 cookiesToken = extract_cookiecsrf(cookie);
                 return super.parseNetworkResponse(response);
 
@@ -141,8 +141,8 @@ public class HbookConnect{
                             }
                             Log("rawCook ::"+response.headers);
                             if(rawCookies==null){ready=true;return super.parseNetworkResponse(response);}
-                            DManager.set_cookie(rawCookies, context);
-                            cookie = DManager.get_cookie(context);
+                            DManager.set_cookie(rawCookies, context, origin);
+                            cookie = DManager.get_cookie(context, origin);
                             cookiesToken = extract_cookiecsrf(cookie);
                             ready=true;
                             return super.parseNetworkResponse(response);

@@ -16,7 +16,7 @@ import java.util.Vector;
 
 
 public final class DManager extends SQLiteOpenHelper {
-     
+
     public String getDatabaseName() {
         String var10000 = super.getDatabaseName();
         return var10000;
@@ -53,12 +53,6 @@ public final class DManager extends SQLiteOpenHelper {
     public void onCreate(  SQLiteDatabase db) {
 
         db.execSQL("create table usersettings(setno INTEGER primary key,prop TEXT,val TEXT)");
-        db.execSQL("create table school(lid INTEGER primary key, id INTEGER,name TEXT)");
-        db.execSQL("create table student(lid INTEGER primary key, id INTEGER,name TEXT, schid INTEGER, roll_no INTEGER)");
-        db.execSQL("create table teacher(lid INTEGER primary key, id INTEGER,name TEXT, schid INTEGER, roll_no INTEGER, lectureids TEXT)");
-        db.execSQL("create table mgroup(lid INTEGER primary key, id INTEGER,name TEXT, schid INTEGER, sids TEXT)");
-        db.execSQL("create table lecture(lid INTEGER primary key, id INTEGER,name TEXT, time_from TEXT, duration )");
-
     }
 
 
@@ -122,10 +116,9 @@ public final class DManager extends SQLiteOpenHelper {
             } while(cs.moveToNext());
         }
     }
-    public static void set_cookie(String cookie,Context context){
-        /*cookie=sessionid=zl3xq7meyhpm4wykevp91vl4kz0qln1y; expires=Wed, 21-Mar-2018 14:31:59 GMT; HttpOnly; Max-Age=1209600; Path=/*/
+    public static void set_cookie(String cookie,Context context, String base_url){
         Log("Got Cookie:"+cookie);
-        String old_cookie = get_cookie(context);//, new_cookie=new String(cookie);
+        String old_cookie = get_cookie(context, base_url);
         {
             if(old_cookie==null)old_cookie="";
             String[]
@@ -153,13 +146,13 @@ public final class DManager extends SQLiteOpenHelper {
         Log("old_cookie:"+old_cookie);
         Log("saving_cookie:"+cookie);
         DManager dm = new DManager(context, "db1.db", null, 1);
-        dm.save_setting("cookie", cookie);
+        dm.save_setting("cookie_"+base_url, cookie);
 
     }
-    public static String get_cookie(Context context)
+    public static String get_cookie(Context context, String base_url)
     {
         DManager dm = new DManager(context, "db1.db", null, 1);
-        return dm.get_setting("cookie");
+        return dm.get_setting("cookie_"+base_url);
     }
     public static void Log(String data)
     {
