@@ -83,7 +83,7 @@ public final class DManager extends SQLiteOpenHelper {
     }
 
     public String get_setting(String key) {
-        return settings.get(key);
+        return ""+settings.get(key);
     }
     public void save_setting(String key, String  value){
         SQLiteDatabase db = getWritableDatabase();

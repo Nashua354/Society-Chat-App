@@ -31,7 +31,7 @@ public class MDrawable
         clickable.setOnClickListener(ls);
         return lin;
     }
-    public static LinearLayout getFormItem(Context context, String Label, int type)
+    public static LinearLayout getFormTextItem(Context context, String Label, int type)
     {
         LayoutInflater li=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LinearLayout lin=(LinearLayout) li.inflate(R.layout.___alert_dialof_form_item,null);
@@ -39,6 +39,27 @@ public class MDrawable
         EditText et = (EditText)lin.findViewById(R.id.___alertdfitet);
         et.setInputType(type);
         textView.setText(Label);
+        return lin;
+    }
+    public static LinearLayout getFormTextItem(Context context, String Label, int type, String def_val)
+    {
+        LayoutInflater li=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout lin=(LinearLayout) li.inflate(R.layout.___alert_dialof_form_item,null);
+        TextView textView = (TextView) lin.findViewById(R.id.___alertdfitl);
+        EditText et = (EditText)lin.findViewById(R.id.___alertdfitet);
+        et.setInputType(type);
+        textView.setText(Label);
+        et.setText(def_val);
+        return lin;
+    }
+
+    public static LinearLayout getButton(Context context, String Label, View.OnClickListener clickListener)
+    {
+        LayoutInflater li=(LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        LinearLayout lin=(LinearLayout) li.inflate(R.layout.___simple_button,null);
+        Button bt = (Button) lin.findViewById(R.id.___simple_button_button);
+        bt.setText(Label);
+        bt.setOnClickListener(clickListener);
         return lin;
     }
     public static class AlertDialogForm{
@@ -52,11 +73,19 @@ public class MDrawable
             builder = new AlertDialog.Builder(context);
             //builder.setTitle(title);
         }
-        public AlertDialogForm addItem(int id, int type, String label)
+        public AlertDialogForm addItem(int type, String label){
+            return addItem(type,label, "");
+        }
+        public AlertDialogForm addItem(int type, String label, String def_val)
         {
-            LinearLayout l = MDrawable.getFormItem(context, label, type);
+            LinearLayout l = MDrawable.getFormTextItem(context, label, type, def_val);
             Log.d("HBOOKSCHOOOL--", l.toString());
-            ll.add(id, l);
+            ll.add(ll.size(), l);
+            return this;
+        }
+        public AlertDialogForm addItem(LinearLayout component)
+        {
+            ll.add(ll.size(), component);
             return this;
         }
         public AlertDialogForm build(String title, String btName)
@@ -70,9 +99,7 @@ public class MDrawable
             {
                 list.addView(ll.get(i));
             }
-            Button bt = new Button(context);
-            bt.setText(btName);
-            bt.setOnClickListener(new View.OnClickListener() {
+            LinearLayout bt = MDrawable.getButton(context, btName, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Vector<String> values = new Vector<String>();
