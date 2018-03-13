@@ -84,3 +84,16 @@ def check_login(request):
             print("exception")
     return HttpResponse("0")
 
+def user_profile(request):
+    if not Users.is_logged(request): return HttpResponse("Login requeired")
+    if request.method == "POST":
+        Users.set_profile_detail(request)
+        return HttpResponse("1")
+    else: 
+        data['result']='sucess'
+        data['profile']=Users.get_profile(request)
+        return HttpResponse()
+
+def search(request):
+    print(request.GET)
+    return HttpResponse(Users.search(request.GET.get("as","")))

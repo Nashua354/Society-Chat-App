@@ -29,6 +29,7 @@ urlpatterns = [
     url(r'^usrinfo', usr_info),
     url(r'^$', index),
     path('apiusers/', include('users.urls')),
-    
+    url(r'^profile', user_profile),
+    url(r'search', search)
     
 ]

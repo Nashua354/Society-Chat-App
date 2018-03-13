@@ -17,3 +17,4 @@ class UserViewSet(viewsets.ModelViewSet):
         users = Users.objects.all()
         serializer = UsersSerializer(users, many=True, context={'request':request})
         return response.Response(serializer.data)
+    

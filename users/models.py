@@ -1,5 +1,5 @@
 from django.db import models
-
+import json
 
 
 class Users(models.Model):
@@ -49,3 +49,55 @@ class Users(models.Model):
         data['gid'] = usr.gid
         data['api'] = "AIzaSyArxj2lGIhAsB0BTrWZxLYj3GF2q25Jaks"
         return data
+
+    @staticmethod
+    def get_profile(request):
+        id = request.session.get('id')
+        print(id)
+        usr = Users.objects.get(id=id)
+        return usr.profile
+
+    @staticmethod
+    def set_profile_detail(request):
+        '''
+            POST:{'set_profile':[['key','val'],['key','val'],['','']....]]}
+        '''
+        id = request.session['id']
+        gotprof=request.POST.get("set_profile")
+        values = json.loads(gotprof)
+        usr = Users.objects.get(id=id)
+        if usr.profile=="":
+            usr.profile=gotprof
+            usr.save()
+            return
+        data = json.loads(usr.profile+"")
+        for v in values:
+            data[v]=values[v]
+        usr.profile = json.dumps(data)
+        usr.save()
+
+    @staticmethod
+    def search(data):
+        data2=[]
+        users = Users.objects.all()
+        for usr in users:
+            val={}
+            if usr.email.count(data)>0:
+                val['id']=usr.id
+                if not usr.profile == "":
+                    print(usr.profile)
+                    profile = json.loads(usr.profile)
+                    val['profile']=profile
+                else: val['profile']={}
+                data2.append(val)
+            else:
+                if not usr.profile == "":
+                    print(usr.profile)
+                    profile = json.loads(usr.profile)
+                    for key in profile:
+                        if profile[key].count(data)>0:
+                            val['id']=usr.id
+                            val['profile']=profile
+                            data2.append(val)
+                            break
+        return json.dumps(data2)
